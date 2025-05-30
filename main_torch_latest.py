@@ -37,7 +37,8 @@ args = parser.parse_args()
 
 dataset = args.dataset
 run_id = args.run_id
-log_dir = f"pred_logs_{run_id}"
+log_root = "../../logs/HTR-Seq2Seq"
+log_dir = f"{log_root}/pred_logs_{run_id}"
 
 print(dataset)
 print(args.start_epoch)
@@ -292,7 +293,7 @@ def test(test_loader, modelID, log_dir, showAttn=True, StrikeRemove=False):
     encoder = Encoder(HIDDEN_SIZE_ENC, HEIGHT, WIDTH, Bi_GRU, CON_STEP, FLIP).cuda()
     decoder = Decoder(HIDDEN_SIZE_DEC, EMBEDDING_SIZE, vocab_size, Attention, TRADEOFF_CONTEXT_EMBED).cuda()
     seq2seq = Seq2Seq(encoder, decoder, output_max_len, vocab_size).cuda()
-    model_file = f"save_weights_{run_id}/seq2seq-{modelID}.model"
+    model_file = f"{log_root}/save_weights_{run_id}/seq2seq-{modelID}.model"
     print('Loading ' + model_file)
     seq2seq.load_state_dict(torch.load(model_file)) #load
 
@@ -341,7 +342,7 @@ def main(train_loader, valid_loader, test_loader, log_dir):
     decoder = Decoder(HIDDEN_SIZE_DEC, EMBEDDING_SIZE, vocab_size, Attention, TRADEOFF_CONTEXT_EMBED).cuda()
     seq2seq = Seq2Seq(encoder, decoder, output_max_len, vocab_size).cuda()    
     if CurriculumModelID > 0:
-        model_file = f"save_weights_{run_id}/seq2seq-{CurriculumModelID}.model"
+        model_file = f"{log_root}/save_weights_{run_id}/seq2seq-{CurriculumModelID}.model"
         #model_file = 'save_weights/words/seq2seq-' + str(CurriculumModelID) +'.model'
         print('Loading ' + model_file)
         seq2seq.load_state_dict(torch.load(model_file)) #load
@@ -402,7 +403,7 @@ def main(train_loader, valid_loader, test_loader, log_dir):
                 min_loss = cer_v
                 min_loss_index = epoch
                 min_loss_count = 0
-                torch.save(seq2seq.state_dict(), f"{folder_weights}/seq2seq-best.model")
+                torch.save(seq2seq.state_dict(), f"{log_root}/{folder_weights}/seq2seq-best.model")
                 wandb.log({"Current best at": epoch})
             else:
                 min_loss_count += 1
