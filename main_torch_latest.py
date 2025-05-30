@@ -33,12 +33,15 @@ parser = argparse.ArgumentParser(description='seq2seq net', formatter_class=argp
 parser.add_argument('--start_epoch', default=0, type=int, help='load saved weights from which epoch')
 parser.add_argument("--dataset", default="", type=str)
 parser.add_argument("--run_id", default="", type=str)
+parser.add_argument("--wandb", default=0, type=int)
 args = parser.parse_args()
 
 dataset = args.dataset
 run_id = args.run_id
 log_root = "../../logs/HTR-Seq2Seq"
 log_dir = f"{log_root}/pred_logs_{run_id}"
+
+wandb_log = args.wandb == 1
 
 print(dataset)
 print(args.start_epoch)
@@ -415,8 +418,6 @@ def main(train_loader, valid_loader, test_loader, log_dir):
 
 
 if __name__ == '__main__':
-
-    wandb_log = True  #Set wandb web log
 
     # ----------------------- initialize wandb ------------------------------- #
     if wandb_log:

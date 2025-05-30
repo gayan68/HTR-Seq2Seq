@@ -1,1 +1,1 @@
-export CUDA_VISIBLE_DEVICES=0 && python3 main_torch_latest.py --dataset MIXED_SINGLE_LINE --run_id 36
+export CUDA_VISIBLE_DEVICES=0 && python3 main_torch_latest.py --dataset MIXED_SINGLE_LINE --run_id 36 --wandb_log 1
