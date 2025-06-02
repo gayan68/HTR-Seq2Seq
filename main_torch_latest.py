@@ -373,11 +373,11 @@ def main(train_loader, valid_loader, test_loader, log_dir):
         os.makedirs(folder_weights)
 
     for epoch in range(start_epoch, epochs):
-        scheduler.step()
         lr = scheduler.get_last_lr()[0] #get_lr()[0]
         teacher_rate = teacher_force_func(epoch) if TEACHER_FORCING else False
         start = time.time()
         loss = train(train_loader, seq2seq, opt, teacher_rate, epoch, log_dir)
+        scheduler.step()
         writeLoss(log_dir, loss, 'train')
         print('epoch %d/%d, loss=%.3f, lr=%.8f, teacher_rate=%.3f, time=%.3f' % (epoch, epochs, loss, lr, teacher_rate, time.time()-start))
 
