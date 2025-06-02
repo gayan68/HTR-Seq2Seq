@@ -41,5 +41,5 @@ python -u $main_script \
 	--dataset MIXED_100 \
 	--run_id "$EXPERIMENT_ID" \
     --log_path "$PATHLOG" \
-    --wandb 0 
+    --wandb 1 \
 >> "$output_file"
