@@ -78,7 +78,7 @@ CurriculumModelID = args.start_epoch
 EMBEDDING_SIZE = 60 # IAM
 TRADEOFF_CONTEXT_EMBED = None # = 5 tradeoff between embedding:context vector = 1:5
 TEACHER_FORCING = True
-MODEL_SAVE_EPOCH = 1
+MODEL_SAVE_EPOCH = 10000
 
 baseDir = datasetConfig.baseDir_word
 # dataset = datasetConfig.dataset
@@ -368,6 +368,10 @@ def main(train_loader, valid_loader, test_loader, log_dir):
     else:
         start_epoch = 0
 
+    folder_weights = f"{log_root}\save_weights_{run_id}"
+    if not os.path.exists(folder_weights):
+        os.makedirs(folder_weights)
+
     for epoch in range(start_epoch, epochs):
         scheduler.step()
         lr = scheduler.get_last_lr()[0] #get_lr()[0]
@@ -378,10 +382,7 @@ def main(train_loader, valid_loader, test_loader, log_dir):
         print('epoch %d/%d, loss=%.3f, lr=%.8f, teacher_rate=%.3f, time=%.3f' % (epoch, epochs, loss, lr, teacher_rate, time.time()-start))
 
         if epoch%MODEL_SAVE_EPOCH == 0:
-            folder_weights = f'save_weights_{run_id}'
-            if not os.path.exists(folder_weights):
-                os.makedirs(folder_weights)
-            # torch.save(seq2seq.state_dict(), folder_weights+'/seq2seq-%d.model'%epoch)
+            torch.save(seq2seq.state_dict(), folder_weights+'/seq2seq-%d.model'%epoch)
 
         start_v = time.time()
         loss_v = valid(valid_loader, seq2seq, epoch, log_dir)
@@ -406,7 +407,7 @@ def main(train_loader, valid_loader, test_loader, log_dir):
                 min_loss = cer_v
                 min_loss_index = epoch
                 min_loss_count = 0
-                torch.save(seq2seq.state_dict(), f"{log_root}/{folder_weights}/seq2seq-best.model")
+                torch.save(seq2seq.state_dict(), f"{folder_weights}/seq2seq-best.model")
                 wandb.log({"Current best at": epoch})
             else:
                 min_loss_count += 1
