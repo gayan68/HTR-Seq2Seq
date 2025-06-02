@@ -40,6 +40,6 @@ export PYTHONPATH=/proj/document_analysis/users/x_gapat/codes/HTR-Seq2Seq/
 python -u $main_script \
 	--dataset MIXED_100 \
 	--run_id "$EXPERIMENT_ID" \
-    --wandb_log 1 \
+    --wandb 1 \
 
 >> "$output_file" 2>&1
