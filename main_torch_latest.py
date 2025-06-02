@@ -368,9 +368,10 @@ def main(train_loader, valid_loader, test_loader, log_dir):
     else:
         start_epoch = 0
 
-    folder_weights = f"{log_root}\save_weights_{run_id}"
+    folder_weights = os.path.join(log_root, f"save_weights_{run_id}")
     if not os.path.exists(folder_weights):
         os.makedirs(folder_weights)
+        print(f"Created the Directory: {folder_weights}")
 
     for epoch in range(start_epoch, epochs):
         lr = scheduler.get_last_lr()[0] #get_lr()[0]
@@ -408,12 +409,14 @@ def main(train_loader, valid_loader, test_loader, log_dir):
                 min_loss_index = epoch
                 min_loss_count = 0
                 torch.save(seq2seq.state_dict(), f"{folder_weights}/seq2seq-best.model")
-                wandb.log({"Current best at": epoch})
+                if wandb_log:
+                    wandb.log({"Current best at": epoch})
             else:
                 min_loss_count += 1
             if min_loss_count >= EARLY_STOP_EPOCH:
                 print('Early Stopping at: %d. Best epoch is: %d' % (epoch, min_loss_index))
-                wandb.log({"Early Stopping at": min_loss_index})
+                if wandb_log:
+                    wandb.log({"Early Stopping at": min_loss_index})
                 return min_loss_index
 
 
