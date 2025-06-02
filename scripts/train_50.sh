@@ -42,4 +42,4 @@ python -u $main_script \
 	--run_id "$EXPERIMENT_ID" \
     --log_path "$PATHLOG" \
     --wandb 0 
->> "$output_file" 2>&1
+>> "$output_file"
