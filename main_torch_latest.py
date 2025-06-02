@@ -33,12 +33,13 @@ parser = argparse.ArgumentParser(description='seq2seq net', formatter_class=argp
 parser.add_argument('--start_epoch', default=0, type=int, help='load saved weights from which epoch')
 parser.add_argument("--dataset", default="", type=str)
 parser.add_argument("--run_id", default="", type=str)
+parser.add_argument("--log_path", default="../../logs/HTR-Seq2Seq", type=str)
 parser.add_argument("--wandb", default=0, type=int)
 args = parser.parse_args()
 
 dataset = args.dataset
 run_id = args.run_id
-log_root = "../../logs/HTR-Seq2Seq"
+log_root = args.log_path
 log_dir = f"{log_root}/pred_logs_{run_id}"
 
 wandb_log = args.wandb == 1
