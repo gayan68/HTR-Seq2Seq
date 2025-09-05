@@ -1,3 +1,7 @@
+# HTR-Seq2Seq
+
+**HTR-Seq2Seq** is a word-level Handwritten Text Recognition (HTR) model that leverages a sequence-to-sequence architecture to recognize handwritten words from images.
+
 ## Acknowledgment
 
 This repository is based on the original implementation from  
