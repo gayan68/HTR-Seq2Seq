@@ -15,7 +15,7 @@ export CUDA_VISIBLE_DEVICES=0 && python3 main_torch_latest.py --dataset MIXED_SI
 ```
 
 --dataset refers to the folder where the data is located.
-The folder strucure should be as {baseDir}{split}/images/{dataset}/gt_RWTH.txt where gt_RWTH.txt is the ground truth file, which can be downloaded from the original repository mentioned above or by contacting us.
+The folder strucure should be as {baseDir}{split}/images/{dataset}/gt_RWTH.txt where gt_RWTH.txt is the ground truth file, which can be downloaded from the [original repository](https://github.com/omni-us/research-seq2seq-HTR) mentioned above or by contacting us.
 The {split} corresponds to the train, val, and test folders of the dataset.
 --run_id is the experiment ID.
 If you include --wandb 1, the training data will be logged to [Weights & Biases (wandb)](https://wandb.ai/).
