@@ -240,13 +240,6 @@ def valid(valid_loader, seq2seq, epoch, log_dir):
             batch_count_n = writePredict(log_dir, epoch, test_index, output_t, 'valid')
             test_label = test_out.permute(1, 0)[1:].contiguous().view(-1)
 
-            # if "p03-185-08-06" in test_index:
-            #     print(f"IMAGE ID {test_index}")
-            #     print(output_t)
-            #     print(f"batch_count_n: {batch_count_n}")
-            #loss_t = F.cross_entropy(output_t.view(-1, vocab_size),
-            #                         test_label, ignore_index=tokens['PAD_TOKEN'])
-            #loss_t = loss_label_smoothing(output_t.view(-1, vocab_size), test_label)
             if LABEL_SMOOTH:
                 loss_t = crit(log_softmax(output_t.view(-1, vocab_size)), test_label)
             else:
@@ -261,13 +254,6 @@ def valid(valid_loader, seq2seq, epoch, log_dir):
     total_loss_t /= (num+1)
     return total_loss_t
 
-# def loadStrikeRemovalModel(blockCount=1, model_name="epoch_30.pth"):
-#     strremoveNet = DenseGenerator(1, 1, n_blocks=blockCount)
-#     state_dict = torch.load(f"strike_removal_model/{model_name}")
-#     if "model_state_dict" in state_dict.keys():
-#         state_dict = state_dict['model_state_dict']
-#     strremoveNet.load_state_dict(state_dict)
-#     return strremoveNet.cuda()
 
 def test2(gt, epoch_pred):
     cer = CER()
@@ -310,12 +296,6 @@ def test(test_loader, modelID, log_dir, showAttn=True, StrikeRemove=False):
         for num, (test_index, test_in, test_in_len, test_out) in enumerate(t):
             #test_in = test_in.unsqueeze(1)
             test_in, test_out = Variable(test_in).cuda(), Variable(test_out).cuda()
-            # if StrikeRemove :
-            #     print("##############3StrikeRemove")
-            #     strremoveNet = loadStrikeRemovalModel()
-            #     test_in[:,0:1,:,:] = strremoveNet(test_in[:,0:1,:,:-1])[:,:,:,:-1]
-            #     test_in[:,1:2,:,:] = strremoveNet(test_in[:,1:2,:,:-1])[:,:,:,:-1]
-            #     test_in[:,2:3,:,:] = strremoveNet(test_in[:,2:3,:,:-1])[:,:,:,:-1]
 
             output_t, attn_weights_t = seq2seq(test_in, test_out, test_in_len, teacher_rate=False, train=False)
             batch_count_n = writePredict(log_dir, modelID, test_index, output_t, 'test')
@@ -347,7 +327,6 @@ def main(train_loader, valid_loader, test_loader, log_dir):
     seq2seq = Seq2Seq(encoder, decoder, output_max_len, vocab_size).cuda()    
     if CurriculumModelID > 0:
         model_file = f"{log_root}/save_weights_{run_id}/seq2seq-{CurriculumModelID}.model"
-        #model_file = 'save_weights/words/seq2seq-' + str(CurriculumModelID) +'.model'
         print('Loading ' + model_file)
         seq2seq.load_state_dict(torch.load(model_file)) #load
     opt = optim.Adam(seq2seq.parameters(), lr=learning_rate)
@@ -400,11 +379,6 @@ def main(train_loader, valid_loader, test_loader, log_dir):
             wandb.log({"Train_loss": loss, "Valid_loss": loss_v, "current_lr": lr, "teacher_rate": teacher_rate, "CER": cer_v})
         
         if EARLY_STOP_EPOCH is not None:
-            # gt = 'RWTH_partition/gt_val_no_threshold.txt'
-            # decoded = 'pred_logs/valid_predict_seq.'+str(epoch)+'.log'
-            # res_cer = sub.Popen(['./tasas_cer.sh', gt, decoded], stdout=sub.PIPE)
-            # res_cer = res_cer.stdout.read().decode('utf8')
-            # loss_v = float(res_cer)/100
             if cer_v < min_loss:
                 min_loss = cer_v
                 min_loss_index = epoch
